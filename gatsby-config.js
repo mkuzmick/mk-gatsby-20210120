@@ -1,3 +1,7 @@
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 module.exports = {
   siteMetadata: {
     title: `MK Gatsby`,
@@ -63,6 +67,18 @@ module.exports = {
         },
       ],
     },
+    {
+      resolve: "gatsby-source-airtable",
+        options: {
+          apiKey: process.env.AIRTABLE_API_KEY,
+          tables: [
+            {
+              baseId: process.env.AIRTABLE_BASE_ID,
+              tableName: "Pokémon",
+            },
+          ]
+        }
+    },  
     {
       resolve: `gatsby-plugin-manifest`,
       options: {

@@ -442,5 +442,91 @@ pre: {
   }
   ```
 
-* Airtable
+### AIRTABLE
+
+loosely following [this tutorial](https://dev.to/sethu/how-to-build-a-website-using-gatsby-airtable-in-30-mins-42gm) but some of the syntax has changed.
+
+```
+npm i gatsby-source-airtable dotenv
+```
+
+then create a `.env` with the relevant stuff
+
+```
+{
+  resolve: "gatsby-source-airtable",
+  options: {
+    apiKey: process.env.AIRTABLE_API_KEY,
+    tables: [
+      {
+        baseId: process.env.AIRTABLE_BASE_ID,
+        tableName: "Pokémon",
+      },
+    ]
+  }
+}, 
+
+```
+
+
+```
+import React from "react"
+import { graphql } from "gatsby"
+
+export default ({data}) => {
+    const allAirtableData = data.allAirtable.edges;
+    return (
+        <div>
+            {/* <pre>
+                {JSON.stringify(allAirtableData, null, 4)}
+            </pre> */}
+            {
+                allAirtableData.map(({node}) => (
+                    <div>
+                        <img alt={node.data.Name} src={node.data.Sprites[0].url} />
+                        <h1>{node.data.Name}</h1>
+                        <a href={`/pokemon/${node.recordId}`}>Click Here</a>
+                    </div>
+                ))
+            }
+        </div>
+    )
+}
+
+export const query = graphql`
+    query {
+        allAirtable {
+            edges {
+              node {
+                id
+                data {
+                  Name
+                  APIURL
+                  Height
+                  Base_Experience
+                  Weight
+                  HP
+                  Attack
+                  Defense
+                  Speed
+                  Special_Defense
+                  Special_Attack
+                  Description
+                  ID
+                  Updated
+                  TimeDiff
+                  Sprites {
+                    url
+                  }
+                }
+                recordId
+              }
+            }
+          }
+    }
+`
+
+```
+
+### TEMPLATES
 * where templates go and why
