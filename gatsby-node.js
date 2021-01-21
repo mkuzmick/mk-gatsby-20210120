@@ -55,6 +55,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     }
   `)
 
+
   if (mdxResult.errors) {
     reporter.panicOnBuild('🚨  ERROR: Loading "createPages" query')
   }
@@ -64,6 +65,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     console.log(
       `creating page for id ${node.id} with slug ${node.fields.slug} with initial h1 of ${(node.headings && node.headings[0]) ? node.headings[0].value : "no h1"}`
     )
+    
     createPage({
       path: node.fields.slug,
       component: path.resolve(
@@ -72,4 +74,38 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       context: { id: node.id },
     })
   })
+
+  const pokemonResult = await graphql(`
+    query {
+        allAirtable {
+            edges {
+                node {
+                    id
+                    recordId
+                }
+            }
+        }
+    }
+  `)
+
+  if (pokemonResult.errors) {
+    reporter.panicOnBuild('🚨  ERROR: Loading "pokemon" query')
+  }
+
+
+  const pokemon = pokemonResult.data.allAirtable.edges
+  pokemon.forEach(({ node }, index) => {
+    console.log(
+      `creating page for id ${node.id} with slug /pokemon/${node.recordId} `
+    )
+    console.log(JSON.stringify(node, null, 4))
+    createPage({
+      path: `/pokemon/${node.recordId}`,
+      component: path.resolve(
+        `./src/templates/pokemon-template.js`
+      ),
+      context: { recordId: node.recordId },
+    })
+  })
+
 }
